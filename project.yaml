@@ -38,7 +38,7 @@ dataSources:
     # startBlock: 13234246
 
     # Kusama
-    startBlock: 15594132
+    startBlock: 10340000
 
     mapping:
       file: ./dist/index.js
