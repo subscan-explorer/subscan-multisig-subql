@@ -1,0 +1,82 @@
+# To improve query performance, we strongly suggest adding indexes to any field that you plan to filter or sort by
+# Add the `@index` or `@index(unique: true)` annotation after any non-key field
+# https://academy.subquery.network/build/graphql.html#indexing-by-non-primary-key-field
+type Block @entity {
+  id: ID!
+
+  number: BigInt
+  timestamp: Date
+  parentHash: String
+  specVersion: Int
+
+  extrinsics: [Extrinsic] @derivedFrom(field: "block")
+}
+
+type Extrinsic @entity {
+  id: ID!
+
+  method: String
+  section: String
+  multisigCall: String
+  args: String
+  signerId: String
+  nonce: BigInt
+  timestamp: Date
+  signature: String
+  tip: BigInt
+  isSigned: Boolean
+  isSuccess: Boolean
+
+  block: Block #create relation to block
+}
+
+type MultisigAccount @entity {
+  id: ID!
+
+  threshold: Int
+
+  members: [String]
+
+  # confirmed: [ExecutedMultisig] @derivedFrom(field: "multisigAccount")
+}
+
+type MultisigRecord @entity {
+  id: ID! # multisigAccount-blockHeight-extrinsicIdx
+  createExtrinsicIdx: String! # blockHeight-extrinsicIdx
+  module: String!
+
+  method: String!
+
+  multisigAccount: MultisigAccount!
+  
+  callHash: String!
+
+  timestamp: Date
+
+  block: Block!
+
+  confirmBlock: Block
+
+  status: String! # default/cancelled/confirmed
+  confirmExtrinsicIdx: String
+  cancelExtrinsicIdx: String
+  approveRecords: [ApproveRecord] @derivedFrom(field: "multisigRecord")
+  cancelRecords: [CancelRecord] @derivedFrom(field: "multisigRecord")
+}
+
+type ApproveRecord @entity {
+  id: ID! # accountId-blockHeight-extrinsicIdx
+  multisigRecord: MultisigRecord!
+  account: String! # approve account address
+  approveTimepoint: String! # blockHeight-extrinsicIdx
+  approveTimestamp: String!
+  approveType: String!
+}
+
+type CancelRecord @entity {
+  id: ID! # accountId-blockHeight-extrinsicIdx
+  multisigRecord: MultisigRecord!
+  account: String! # approve account address
+  cancelTimepoint: String! # blockHeight-extrinsicIdx
+  cancelTimestamp: String!
+}
