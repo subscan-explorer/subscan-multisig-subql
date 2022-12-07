@@ -38,12 +38,17 @@ export class ExtrinsicHandler {
     const { args: argsDef } = meta;
     args.map((arg, index) => {
       const { name, type } = argsDef[index];
-      if(name.eq('call') && type.eq('WrapperKeepOpaque<Call>')) {
-        callData = (arg as WrapperKeepOpaque<Call>).unwrap().toHex();
-      } 
-      if(name.eq('call') && type.eq('Call')) {
-        callData = (arg as Call).toHex();
-      } 
+      try {
+        if(name.eq('call') && type.eq('WrapperKeepOpaque<Call>')) {
+          callData = (arg as WrapperKeepOpaque<Call>).toHex();
+        } 
+        if(name.eq('call') && type.eq('Call')) {
+          callData = (arg as Call).toHex();
+        } 
+      } catch (error) {
+        logger.error('multisigCallError');
+        logger.info(error.toString());
+      }
     });
     return callData;
   }
