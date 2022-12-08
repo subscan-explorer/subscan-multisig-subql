@@ -86,16 +86,57 @@ Open your browser and head to `http://localhost:3000`.
 
 Finally, you should see a GraphQL playground is showing in the explorer and the schemas that ready to query.
 
-For the `subql-starter` project, you can try to query with the following code to get a taste of how it works.
+1. query multisig accounts
 
 ```graphql
 {
   query {
-    starterEntities(first: 10) {
+    multisigAccounts(first: 10) {
       nodes {
-        field1
-        field2
-        field3
+        id
+        confirmed {
+          nodes {
+            id
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+2. query multisig account by its id
+
+```graphql
+{
+  query {
+    multisigAccount(id: "2qa8bEshNoLyWSzsiU6L3kVBDYaGGztQp7AfSMTqz2jyT1X2") {
+      id
+      confirmed {
+        nodes {
+          id
+        }
+      }
+    }
+  }
+}
+```
+
+3. query confirmed extrinsics by mutlsig account id
+
+```graphql
+{
+  query {
+    executedMultisigs(
+      filter: { multisigAccountId: { equalTo: "2qa8bEshNoLyWSzsiU6L3kVBDYaGGztQp7AfSMTqz2jyT1X2" } }
+    ) {
+      totalCount
+      nodes {
+        id
+        extrinsicIdx
+        block {
+          id
+        }
       }
     }
   }
