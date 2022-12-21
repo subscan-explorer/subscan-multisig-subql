@@ -2,7 +2,7 @@ import { SubstrateExtrinsic } from '@subql/types';
 import { checkIfExtrinsicExecuteSuccess, getBatchInterruptedIndex } from '../helpers';
 import { Extrinsic } from '../types/models/Extrinsic';
 import { BlockHandler } from './block';
-import { WrapperKeepOpaque } from '@polkadot/types-codec';
+import { WrapperKeepOpaque, WrapperOpaque } from '@polkadot/types-codec';
 import type { Call } from '@polkadot/types/interfaces';
 
 export class ExtrinsicHandler {
@@ -42,9 +42,13 @@ export class ExtrinsicHandler {
         if(name.eq('call') && type.eq('WrapperKeepOpaque<Call>')) {
           callData = (arg as WrapperKeepOpaque<Call>).toHex();
         } 
+        if(name.eq('call') && type.eq('WrapperOpaque<Call>')) {
+          callData = (arg as WrapperOpaque<Call>).toHex();
+        } 
         if(name.eq('call') && type.eq('Call')) {
           callData = (arg as Call).toHex();
         } 
+        
       } catch (error) {
         logger.error('multisigCallError');
         logger.info(error.toString());
